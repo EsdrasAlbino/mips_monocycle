@@ -165,7 +165,7 @@ module ControlUnit(
 	output reg MemtoReg, MemRead, MemWrite,
 	output reg Branch,
 	output reg [1:0] ALUOp,
-	output reg [3:0] ALUCtl;);
+	output reg [3:0] ALUCtl)
 	
 	// main decoder
 	MainCOntrol main_control_0(
@@ -188,7 +188,6 @@ module ControlUnit(
 	);
 
 	endmodule
-)
 	
  module Mux1(inst20_16, inst15_11, RegDst, WriteReg);
 
