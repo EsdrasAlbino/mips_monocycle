@@ -1,6 +1,5 @@
 // Code your design here
-// Code your design here
- module ALU (ALUCtl, A, B, ALUOut, Zero);
+module ALU (ALUCtl, A, B, ALUOut, Zero);
 
 	input [3:0] ALUCtl;
 	input [31:0] A,B;
@@ -20,23 +19,59 @@
 			default: ALUOut <= 0;
 		endcase
 	end
-endmodule 
+endmodule
 
- module AndGate(Branch, Zero, PCSrc);
+module ALUControl (ALUOp, FuncCode, ALUCtl);
+
+	input [1:0] ALUOp;
+	input [5:0] FuncCode;
+	output reg [3:0] ALUCtl;
+	
+	always @(ALUOp, FuncCode) begin
+	if(ALUOp == 0)
+		ALUCtl <= 2;    //LW and SW use add
+	else if(ALUOp == 1)
+		ALUCtl <= 6;		// branch use subtract
+	else
+		case(FuncCode)
+			32: ALUCtl <= 2; //add
+			34: ALUCtl <= 6; //subtract		
+			36: ALUCtl <= 0; //and	
+			37: ALUCtl <= 1; //or	
+			39: ALUCtl <= 12; //nor
+			42: ALUCtl <= 7; //slt
+			default: ALUCtl <= 15; //should not happen
+		endcase
+	end
+endmodule
+
+module Add_ALU(PCout, ShiftOut, Add_ALUOut);
+
+	input [31:0] PCout;
+	input [31:0] ShiftOut;
+	
+	output reg [31:0] Add_ALUOut;
+
+	always @(*) begin
+		Add_ALUOut <= PCout + ShiftOut;
+	end
+endmodule
+
+module AndGate(Branch, Zero, AndGateOut);
 	input Branch;
 	input Zero;
-	output reg PCSrc;
+	output reg AndGateOut;
 	
 	always @(*) begin
-		PCSrc <= Branch && Zero;
+		AndGateOut <= Branch && Zero;
 	end
-endmodule 
+endmodule
 
- module DataMemory (clock, address, MemWrite/* , MemRead */, WriteData, ReadData);
+module DataMemory (clock, address, MemWrite, MemRead, WriteData, ReadData);
 
 	input clock;
 	input [6:0] address;
-	input MemWrite/* , MemRead */;
+	input MemWrite, MemRead;
 	input [31:0] WriteData; 
 	
 	output reg [31:0] ReadData;
@@ -53,17 +88,17 @@ endmodule
 	
 		if (MemWrite == 1)
 			Mem[address[6:2]] <= WriteData;
-			$display("adress: %d, data: %d", address, WriteData);
 	end
 	
- 	/*always @(negedge clock) begin
+	always @(negedge clock) begin
 		if (MemRead == 1)
 			ReadData <= Mem[address[6:2]];
-	end */
+	end	
 endmodule
- 
- module InstMem(address, inst);
 
+module InstMem(clock, address, inst);
+
+	input clock;
 	input [31:0] address;
 	
 	output reg [31:0]	inst;
@@ -73,41 +108,19 @@ endmodule
 	initial begin
       $readmemh("program.txt", Mem, 0, 5);
 	end
-	assign inst = Mem[addr >> 2];
-
-endmodule 
-
-module ALUControl (ALUControl, FuncCode, ALUCtl);
-
-	input [1:0] ALUControl;
-	input [5:0] FuncCode;
-	output reg [3:0] ALUCtl;
 	
-	always @(ALUControl, FuncCode) begin
-	if(ALUControl == 0)
-		ALUCtl <= 2;    //LW and SW use add
-	else if(ALUControl == 1)
-		ALUCtl <= 6;		// branch use subtract
-	else
-		case(FuncCode)
-			32: ALUCtl <= 2; //add
-			34: ALUCtl <= 6; //subtract		
-			36: ALUCtl <= 0; //and	
-			37: ALUCtl <= 1; //or	
-			39: ALUCtl <= 12; //nor
-			42: ALUCtl <= 7; //slt
-			default: ALUCtl <= 15; //should not happen
-		endcase
+	always @( posedge clock) begin
+		inst <= Mem[address[31:2]];
 	end
 endmodule
 
-module MainCOntrol(
+module MainControl(
 	input [5:0] Opcode,
 	
 	output reg RegDst, RegWrite, ALUSrc,
 	output reg MemtoReg, MemRead, MemWrite,
 	output reg Branch,
-	output reg [1:0] ALUControl); //ALUOp
+	output reg [1:0] ALUOp);
 	
 	always @(*) begin
 		case(Opcode)
@@ -119,7 +132,7 @@ module MainCOntrol(
 				MemRead		<= 0;
 				MemWrite		<= 0;
 				Branch		<= 0;
-				ALUControl			<= 2'b10;;
+				ALUOp			<= 2'b10;;
 			end
 			35: begin
 				RegDst 		<= 0;
@@ -129,7 +142,7 @@ module MainCOntrol(
 				MemRead		<= 1;
 				MemWrite		<= 0;
 				Branch		<= 0;
-				ALUControl			<= 2'b00;;
+				ALUOp			<= 2'b00;;
 			end
 			43: begin
 				RegDst 		<= 0;
@@ -139,7 +152,7 @@ module MainCOntrol(
 				MemRead		<= 0;
 				MemWrite		<= 1;
 				Branch		<= 0;
-				ALUControl			<= 2'b00;
+				ALUOp			<= 2'b00;
 			end
 			4: begin
 				RegDst 		<= 0;
@@ -149,57 +162,78 @@ module MainCOntrol(
 				MemRead		<= 0;
 				MemWrite		<= 0;
 				Branch		<= 1;
-				ALUControl			<= 2'b01;
+				ALUOp			<= 2'b01;
 			end
 		endcase
 	end
 endmodule
-
-module ControlUnit(
-	input [5:0] Opcode,
-	input [5:0] Funct,
 	
-	output reg RegDst, RegWrite, ALUSrc,
-	output reg MemtoReg, MemRead, MemWrite,
-	output reg Branch,
-	output reg [1:0] ALUOp,
-	output reg [3:0] ALUCtl);
+module Mux1(inst20_16, inst15_11, RegDst, WriteReg);
+
+	input [20:16] inst20_16;
+	input [15:11] inst15_11;
+	input RegDst;
 	
-	// main decoder
-	MainCOntrol main_control_0(
-		.Opcode(Opcode),
-		.RegDst(RegDst),
-		.RegWrite(RegWrite),
-		.ALUSrc(ALUSrc),
-		.MemtoReg(MemtoReg),
-		.MemRead(MemRead),
-		.MemWrite(MemWrite),
-		.Branch(Branch),
-		.ALUControl(ALUOp)
-	);
+	output reg [4:0] WriteReg;
 
-	// ALU decoder
-	ALUControl alu_control_0(
-		.ALUControl(ALUOp),
-		.FuncCode(Funct),
-		.ALUCtl(ALUCtl)
-	);
-
-	endmodule
-
-module Mux2to1(
-    input wire [31:0] in0,
-    input wire [31:0] in1,
-    input wire sel,
-    output wire [31:0] out
-);
-
-    assign out = sel ? in1 : in0;
-
+	always @ (RegDst, inst20_16, inst15_11) begin
+		case(RegDst) 
+			0 : WriteReg <= inst20_16;
+			1 : WriteReg <= inst15_11;
+		endcase
+	end
 endmodule
 
+module Mux2 (ALUSrc, ReadData2, Extend32, ALU_B);
 
- module PC(clock, reset, PCin, PCout);
+	input ALUSrc;
+	input [31:0] ReadData2,Extend32;	
+	
+	output reg [31:0] ALU_B;
+	
+	always @(ALUSrc, ReadData2, Extend32) begin
+		case (ALUSrc)
+			0: ALU_B <= ReadData2 ;
+			1: ALU_B <= Extend32;
+		endcase
+	end
+endmodule
+
+module Mux3 (ReadData, ALUOut, MemtoReg, WriteData_Reg);
+
+	input [31:0] ReadData, ALUOut;
+	input MemtoReg;	
+	
+	output reg [31:0] WriteData_Reg;
+	
+	always @(*) begin
+		case (MemtoReg)
+			0: WriteData_Reg <= ALUOut ;
+			1: WriteData_Reg <= ReadData;
+		endcase
+	end
+endmodule
+
+module Mux4 (PCout, Add_ALUOut, AndGateOut, PCin);
+
+	input [31:0] PCout, Add_ALUOut;
+	input AndGateOut;	
+	
+	output reg [31:0] PCin;
+	
+	initial begin
+		PCin <= 0;
+	end
+	
+	always @(*) begin
+		case (AndGateOut)
+			0: PCin <= PCout ;
+			1: PCin <= Add_ALUOut;
+		endcase
+	end
+endmodule
+
+module PC(clock, reset, PCin, PCout);
 
 	input clock, reset;
 	input [31:0] PCin;
@@ -210,11 +244,11 @@ endmodule
 		if (reset == 1) 
 			PCout <= 0;
 		else 
-			PCout <= PCin; 
+			PCout <= PCin + 4; 
 	end
-endmodule 
+endmodule
 
- module RegFile(clock, RegWrite, ReadReg1, ReadReg2, WriteReg, WriteData, ReadData1, ReadData2);
+module RegFile(clock, RegWrite, ReadReg1, ReadReg2, WriteReg, WriteData, ReadData1, ReadData2);
 
 	input clock;
 	input RegWrite;
@@ -237,9 +271,9 @@ endmodule
 		if (RegWrite == 1)
 			reg_mem[WriteReg] = WriteData;
 	end	
-endmodule 
+endmodule
 
- module ShiftLeft2 (ShiftIn, ShiftOut);
+module ShiftLeft2 (ShiftIn, ShiftOut);
 
 	input [31:0] ShiftIn;
 	output reg [31:0] ShiftOut;
@@ -248,9 +282,9 @@ endmodule
 		ShiftOut = ShiftIn << 2;
 	end 
 	
-endmodule 
+endmodule
 
- module SignExtend (inst15_0, Extend32);
+module SignExtend (inst15_0, Extend32);
 
 	input [15:0] inst15_0;
 	output reg [31:0] Extend32;
@@ -258,24 +292,13 @@ endmodule
 	always @(inst15_0) begin
 		Extend32[31:0] <= inst15_0[15:0];
 	end
-endmodule 
-
-module Add(ALUOut, A, B);
-
-	input [31:0] A,B;
-	output reg [31:0] ALUOut;
-	
-	always @(A, B) begin
-		ALUOut = A + B;
-	end
 endmodule
-
 
 module MipsCPU(clock, reset, 
 					PCin,PCout,
 					inst,
 					RegDst, RegWrite, ALUSrc, MemtoReg, MemRead, MemWrite, Branch,
-					ALUControl,
+					ALUOp,
 					WriteReg,
 					ReadData1, ReadData2,
 					Extend32,
@@ -284,17 +307,13 @@ module MipsCPU(clock, reset,
 					ALUCtl,
 					Zero,
 					ALUOut,
-					pcPlus4,
-					PCSrc,
+					Add_ALUOut,
+					AndGateOut,
 					ReadData,
 					WriteData_Reg);
 					
 	input clock;
 	input reset;
-
-	  always @(*) begin
-    $display("PCin: %d", PCin);
-  end
 	
 	//Connection of PC
 	output wire [31:0] PCin, PCout;
@@ -306,33 +325,23 @@ module MipsCPU(clock, reset,
 		//outputs
 		.PCout(PCout)	
 	);
-
-	//Connection of PCPlus4
-	output wire [31:0] pcPlus4;
-	Add pcplus4_0(
-		//inputs
-		.A(PCout),
-		.B(4),
-		//outputs
-		.ALUOut(pcPlus4)
-	);
-
+	
 	//Connection of InstMem
 	output wire [31:0] inst;
 	InstMem instmem_0(
 		//inputs
-		.address(PCout),
+		.clock(clock),
+		.address(PCin),
 		//outputs
 		.inst(inst)	
 	);
 	
-	//Connection of ControlUnit
-	output wire RegDst, RegWrite, ALUSrc, MemtoReg, MemRead, MemWrite, Branch, ALUCtl;
-	output wire [1:0] ALUControl;
-	ControlUnit main_control_0(
+	//Connection of MainControl
+	output wire RegDst, RegWrite, ALUSrc, MemtoReg, MemRead, MemWrite, Branch;
+	output wire [1:0] ALUOp;
+	MainControl main_control_0(
 		//inputs
 		.Opcode(inst[31:26]),
-		.Funct(inst[5:0]),
 		//outputs
 		.RegDst(RegDst),
 		.RegWrite(RegWrite),
@@ -341,18 +350,18 @@ module MipsCPU(clock, reset,
 		.MemRead(MemRead),
 		.MemWrite(MemWrite),
 		.Branch(Branch),
-		.ALUCtl(ALUCtl)	
+		.ALUOp(ALUOp)	
 	);
 	
 	//Connection of the Mux between InstMem and RegisterFile
 	output wire [4:0]  WriteReg;
-	Mux2to1 mux1_0(
+	Mux1 mux1_0(
 		//inputs
-		.in0(inst[20:16]),
-		.in1(inst[15:11]),
-		.sel(RegDst),
+		.inst20_16(inst[20:16]),
+		.inst15_11(inst[15:11]),
+		.RegDst(RegDst),
 		//outputs
-		.out(WriteReg)	
+		.WriteReg(WriteReg)	
 	);
 	
 	//Connection of RegFile
@@ -360,14 +369,15 @@ module MipsCPU(clock, reset,
 	RegFile regfile_0(
 		//inputs
 		.clock(clock),
-		.ReadReg1(inst[25:21]), //A1
-		.ReadReg2(inst[20:16]), //A2
-		.RegWrite(RegWrite),    // WE3
-		.WriteReg(WriteReg),	//A3
-		.WriteData(WriteData_Reg), //WD3
+		.ReadReg1(inst[25:21]),
+		//***********************************************************************
+		.ReadReg2(inst[20:16]),
+		.RegWrite(RegWrite),
+		.WriteReg(WriteReg),	
+		.WriteData(WriteData_Reg),
 		//outputs
-		.ReadData1(ReadData1), //RD1
-		.ReadData2(ReadData2)	//RD2
+		.ReadData1(ReadData1),
+		.ReadData2(ReadData2)	
 	);
 	
 	//Connection of SignExtend
@@ -381,13 +391,13 @@ module MipsCPU(clock, reset,
 	
 	//Connection of Mux2
 	output wire [31:0] ALU_B;
-	Mux2to1 mux2_0(
+	Mux2 mux2_0(
 		//inputs
-		.in0(ReadData2), //ReadData2
-		.in1(Extend32), //Extend32
-		.sel(ALUSrc), //ALUSrc
+		.ALUSrc(ALUSrc),
+		.ReadData2(ReadData2),
+		.Extend32(Extend32),
 		//outputs
-		.out(ALU_B) //src B	
+		.ALU_B(ALU_B)	
 	);
 	
 	//Connection of ShiftLeft2
@@ -398,47 +408,58 @@ module MipsCPU(clock, reset,
 		//outputs
 		.ShiftOut(ShiftOut)
 	);
-
-	output wire[31:0] PCBranch;
-	Add PcBranch(
+	
+	//Connection of ALUControl
+	output wire [3:0] ALUCtl;
+	ALUControl alu_control_0(
 		//inputs
-		.A(pcPlus4),
-		.B(ShiftOut),
+		.ALUOp(ALUOp),
+		.FuncCode(inst[5:0]),
 		//outputs
-		.ALUOut(PCBranch)
+		.ALUCtl(ALUCtl)	
 	);
-		
+	
 	//Connection of ALU
 	output wire Zero;
 	output wire [31:0] ALUOut;
 	ALU alu_0(
 		//inputs
-		.A(ReadData1), //SRC A
+		.A(ReadData1),
 		.B(ALU_B),
 		.ALUCtl(ALUCtl),
 		//outputs
-		.ALUOut(ALUOut), // ALU Result
+		.ALUOut(ALUOut),
 		.Zero(Zero)
 	);
 	
+	//Connection of Add_ALU
+	output wire [31:0] Add_ALUOut;
+	Add_ALU add_alu_0(
+		//inputs
+		.PCout(PCout),
+		.ShiftOut(ShiftOut),
+		//outputs
+		.Add_ALUOut(Add_ALUOut)	
+	);
+	
 	//Connection of AndGate
-	output wire PCSrc;
+	output wire AndGateOut;
 	AndGate and_gate_0(
 		//inputs
 		.Branch(Branch),
 		.Zero(Zero),
 		//outputs
-		.PCSrc(PCSrc)
+		.AndGateOut(AndGateOut)
 	);
 	
 	//Connection of Mux4
-	Mux2to1 mux4_0(
+	Mux4 mux4_0(
 		//inputs
-		.in0(pcPlus4),
-		.in1(PCBranch),
-		.sel(PCSrc),
+		.PCout(PCout),
+		.Add_ALUOut(Add_ALUOut),
+		.AndGateOut(AndGateOut),
 		//outputs
-		.out(PCin)
+		.PCin(PCin)
 	);
 	
 	//Connection of DataMemory
@@ -448,7 +469,7 @@ module MipsCPU(clock, reset,
 		.clock(clock),
 		.address(ALUOut),
 		.MemWrite(MemWrite),
-		/* .MemRead(MemRead), */
+		.MemRead(MemRead),
 		.WriteData(ReadData2),
 		//outputs
 		.ReadData(ReadData)
@@ -456,12 +477,11 @@ module MipsCPU(clock, reset,
 	
 	//Connection of Mux3
 	output wire[31:0] WriteData_Reg;
-	Mux2to1 mu3_0(
+	Mux3 mu3_0(
 	//inputs
-	.in0(ALUOut),
-	.in1(ReadData),
-	.sel(MemtoReg),
+	.ReadData(ReadData),
+	.ALUOut(ALUOut),
 	//outputs
-	.out(WriteData_Reg)
+	.WriteData_Reg(WriteData_Reg)
 	);	
 endmodule
