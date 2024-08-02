@@ -1,6 +1,4 @@
-`include "mips_cpu.v"
-
-module mips_cpu_tb;
+module testbench;
   reg clock;
   reg reset;
   
@@ -54,7 +52,7 @@ module mips_cpu_tb;
     reset = 0;
 
     // Wait for some time and observe the output
-    #1000;
+    #80;
 
     // Finish simulation
     $finish;

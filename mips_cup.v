@@ -75,8 +75,6 @@ endmodule
 	end
 	always @(*) begin
 		inst <= Mem[address[31:2]];
-		$display("inst: %d", inst);
-
 	end
 
 endmodule 
@@ -167,7 +165,7 @@ module ControlUnit(
 	output reg MemtoReg, MemRead, MemWrite,
 	output reg Branch,
 	output reg [1:0] ALUOp,
-	output reg [2:0] ALUCtl);
+	output reg [3:0] ALUCtl);
 	
 	// main decoder
 	MainCOntrol main_control_0(
@@ -296,10 +294,6 @@ module MipsCPU(clock, reset,
 	input clock;
 	input reset;
 
-	always @(*) begin
-    $display("PCout: %d", PCout);
-  end
-	
 	//Connection of PC
 	output wire [31:0] PCin, PCout;
 	PC pc_0(
@@ -331,8 +325,9 @@ module MipsCPU(clock, reset,
 	);
 	
 	//Connection of ControlUnit
-	output wire RegDst, RegWrite, ALUSrc, MemtoReg, MemRead, MemWrite, Branch, ALUCtl;
+	output wire RegDst, RegWrite, ALUSrc, MemtoReg, MemRead, MemWrite, Branch;
 	output wire [1:0] ALUControl;
+	output wire [3:0] ALUCtl;
 	ControlUnit main_control_0(
 		//inputs
 		.Opcode(inst[31:26]),
@@ -345,6 +340,7 @@ module MipsCPU(clock, reset,
 		.MemRead(MemRead),
 		.MemWrite(MemWrite),
 		.Branch(Branch),
+		.ALUOp(ALUControl),
 		.ALUCtl(ALUCtl)	
 	);
 	
