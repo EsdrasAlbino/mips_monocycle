@@ -73,7 +73,11 @@ endmodule
 	initial begin
       $readmemh("program.txt", Mem, 0, 5);
 	end
-	assign inst = Mem[addr >> 2];
+	always @(*) begin
+		inst <= Mem[address[31:2]];
+		$display("inst: %d", inst);
+
+	end
 
 endmodule 
 
@@ -163,7 +167,7 @@ module ControlUnit(
 	output reg MemtoReg, MemRead, MemWrite,
 	output reg Branch,
 	output reg [1:0] ALUOp,
-	output reg [3:0] ALUCtl);
+	output reg [2:0] ALUCtl);
 	
 	// main decoder
 	MainCOntrol main_control_0(
@@ -199,7 +203,7 @@ module Mux2to1(
 endmodule
 
 
- module PC(clock, reset, PCin, PCout);
+module PC(clock, reset, PCin, PCout);
 
 	input clock, reset;
 	input [31:0] PCin;
@@ -292,8 +296,8 @@ module MipsCPU(clock, reset,
 	input clock;
 	input reset;
 
-	  always @(*) begin
-    $display("PCin: %d", PCin);
+	always @(*) begin
+    $display("PCout: %d", PCout);
   end
 	
 	//Connection of PC
@@ -414,7 +418,7 @@ module MipsCPU(clock, reset,
 	ALU alu_0(
 		//inputs
 		.A(ReadData1), //SRC A
-		.B(ALU_B),
+		.B(ALU_B), //SRC B
 		.ALUCtl(ALUCtl),
 		//outputs
 		.ALUOut(ALUOut), // ALU Result
