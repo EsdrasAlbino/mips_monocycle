@@ -378,6 +378,15 @@ module MipsCPU(clock, reset,
 		//outputs
 		.Extend32(Extend32)
 	);
+
+	output wire [31:0] ShiftOutJump;
+	//Connection of ShiftLeft2
+	ShiftLeft2 shift_left2_1(
+		//inputs
+		.ShiftIn(inst[25:0]),
+		//outputs
+		.ShiftOut(ShiftOutJump)
+	);
 	
 	//Connection of Mux2
 	output wire [31:0] ALU_B;
