@@ -1,0 +1,13 @@
+//R Instructions 
+`define R_TYPE    6'b000000 // Funct codes for R-Type Instructions
+`define ADD       6'b100000
+`define SUB       6'b100010
+
+//I Instructions 	
+`define ADDI    6'b001000 // Add Immediate
+`define BEQ     6'b000100 // Branch Instructions
+`define LW      6'b100011 // Load Instructions
+`define SW      6'b101011 // Store Instructions
+
+// J Instructions 
+`define J       6'b000010 //Jump
