@@ -1,0 +1,30 @@
+module test_MuxAluScr;
+  reg ALUSrc;
+  reg [31:0] ReadData2, extend32;
+  wire [31:0] SrcB;
+
+  MuxAluScr uut (
+    .ALUSrc(ALUSrc),
+    .ReadData2(ReadData2),
+    .extend32(extend32),
+    .SrcB(SrcB)
+  );
+
+  initial begin
+    // Teste para ALUSrc = 0
+    ALUSrc = 0;
+    ReadData2 = 32'd100;
+    extend32 = 32'd200;
+    #10;
+    $display("ALUSrc = %b, ReadData2 = %d, extend32 = %d, SrcB = %d", ALUSrc, ReadData2, extend32, SrcB);
+
+    // Teste para ALUSrc = 1
+    ALUSrc = 1;
+    ReadData2 = 32'd100;
+    extend32 = 32'd200;
+    #10;
+    $display("ALUSrc = %b, ReadData2 = %d, extend32 = %d, SrcB = %d", ALUSrc, ReadData2, extend32, SrcB);
+
+    $finish;
+  end
+endmodule
