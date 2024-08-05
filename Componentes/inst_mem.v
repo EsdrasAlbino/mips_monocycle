@@ -61,7 +61,6 @@ initial begin
   memory[35] = 8'b00001000;  
 end
 
-
   always @(address) begin
   ReadData[ 7: 0] = memory[address+3];
   ReadData[15: 8] = memory[address+2];
