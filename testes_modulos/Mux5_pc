@@ -1,0 +1,30 @@
+module test_Mux5_PC;
+  reg [31:0] pcPlus4, branch;
+  reg PCSrc;
+  wire [31:0] PCoutMux;
+
+  Mux5_PC uut (
+    .pcPlus4(pcPlus4),
+    .branch(branch),
+    .PCSrc(PCSrc),
+    .PCoutMux(PCoutMux)
+  );
+
+  initial begin
+    // Teste para PCSrc = 0
+    PCSrc = 0;
+    pcPlus4 = 32'd100;
+    branch = 32'd200;
+    #10;
+    $display("PCSrc = %b, pcPlus4 = %d, branch = %d, PCoutMux = %d", PCSrc, pcPlus4, branch, PCoutMux);
+
+    // Teste para PCSrc = 1
+    PCSrc = 1;
+    pcPlus4 = 32'd100;
+    branch = 32'd200;
+    #10;
+    $display("PCSrc = %b, pcPlus4 = %d, branch = %d, PCoutMux = %d", PCSrc, pcPlus4, branch, PCoutMux);
+
+    $finish;
+  end
+endmodule
