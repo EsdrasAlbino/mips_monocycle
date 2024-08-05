@@ -1,0 +1,43 @@
+module test_controlUnit;
+  reg [5:0] op, funct;
+  wire menToReg, menWrite, branch, aluSrc, regDst, regWrite, jump;
+  wire [2:0] aluControl;
+
+  controlUnit uut (
+    .op(op),
+    .funct(funct),
+    .menToReg(menToReg),
+    .menWrite(menWrite),
+    .branch(branch),
+    .aluSrc(aluSrc),
+    .regDst(regDst),
+    .regWrite(regWrite),
+    .jump(jump),
+    .aluControl(aluControl)
+  );
+
+  initial begin
+    // Teste para instrução ADDI
+    op = `ADDI;
+    funct = 6'b000000;
+    #10;
+    $display("ADDI: menToReg = %b, menWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", 
+             menToReg, menWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+    // Teste para instrução R-TYPE
+    op = `R_TYPE;
+    funct = 6'b100000;
+    #10;
+    $display("R-TYPE (ADD): menToReg = %b, menWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", 
+             menToReg, menWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+    // Teste para instrução BEQ
+    op = `BEQ;
+    funct = 6'b000000;
+    #10;
+    $display("BEQ: menToReg = %b, menWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", 
+             menToReg, menWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+    $finish;
+  end
+endmodule
