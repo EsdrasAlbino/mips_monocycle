@@ -2,8 +2,8 @@ module RegFile(
   input [4:0] ReadReg1,
   input [4:0] ReadReg2, 
   input [4:0] WriteReg, 
-  input signed [31:0] WriteData, 
-  input RegWrite, 
+  input signed [31:0] WD3, 
+  input WE3, 
   input clock, 
   output reg signed [31:0] ReadData1, 
   output reg signed [31:0] ReadData2 
