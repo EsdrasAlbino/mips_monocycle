@@ -1,0 +1,26 @@
+module tb_PCBranch;
+    reg [31:0] extend32;
+    reg [31:0] PCplus4;
+    wire [31:0] out;
+
+    PCBranch uut (
+        .extend32(extend32), 
+        .PCplus4(PCplus4), 
+        .out(out)
+    );
+
+    initial begin
+        // Test Case: Branch address calculation
+        extend32 = 32'h00000004;
+        PCplus4 = 32'h00000010;
+        #10;
+        $display("out = %h (Expected: 00000014)", out);
+
+        extend32 = 32'h00000010;
+        PCplus4 = 32'h00000020;
+        #10;
+        $display("out = %h (Expected: 00000030)", out);
+
+        $finish;
+    end
+endmodule
