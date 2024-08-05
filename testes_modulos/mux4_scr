@@ -1,0 +1,30 @@
+module test_Mux4_Scr;
+  reg PCSrc;
+  reg [31:0] PCPlus4, PCBranch;
+  wire [31:0] out;
+
+  Mux4_Scr uut (
+    .PCSrc(PCSrc),
+    .PCPlus4(PCPlus4),
+    .PCBranch(PCBranch),
+    .out(out)
+  );
+
+  initial begin
+    // Teste para PCSrc = 0
+    PCSrc = 0;
+    PCPlus4 = 32'd100;
+    PCBranch = 32'd200;
+    #10;
+    $display("PCSrc = %b, PCPlus4 = %d, PCBranch = %d, out = %d", PCSrc, PCPlus4, PCBranch, out);
+
+    // Teste para PCSrc = 1
+    PCSrc = 1;
+    PCPlus4 = 32'd100;
+    PCBranch = 32'd200;
+    #10;
+    $display("PCSrc = %b, PCPlus4 = %d, PCBranch = %d, out = %d", PCSrc, PCPlus4, PCBranch, out);
+
+    $finish;
+  end
+endmodule
