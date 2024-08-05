@@ -1,0 +1,31 @@
+module test_Mux6_Jump;
+  reg [31:0] PCJumpIn;
+  reg jump;
+  reg [25:0] destination;
+  wire [31:0] PC_jump_output;
+
+  Mux6_Jump uut (
+    .PCJumpIn(PCJumpIn),
+    .jump(jump),
+    .destination(destination),
+    .PC_jump_output(PC_jump_output)
+  );
+
+  initial begin
+    // Teste para jump = 0
+    jump = 0;
+    PCJumpIn = 32'd100;
+    destination = 26'd500;
+    #10;
+    $display("jump = %b, PCJumpIn = %d, destination = %d, PC_jump_output = %d", jump, PCJumpIn, destination, PC_jump_output);
+
+    // Teste para jump = 1
+    jump = 1;
+    PCJumpIn = 32'd100;
+    destination = 26'd500;
+    #10;
+    $display("jump = %b, PCJumpIn = %d, destination = %d, PC_jump_output = %d", jump, PCJumpIn, destination, PC_jump_output);
+
+    $finish;
+  end
+endmodule
