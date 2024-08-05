@@ -1,0 +1,42 @@
+module test_regFile;
+  reg [4:0] ReadReg1, ReadReg2, WriteReg;
+  reg signed [31:0] WriteData3;
+  reg WriteEnable3, clock;
+  wire signed [31:0] ReadData1, ReadData2;
+
+  regFile uut (
+    .ReadReg1(ReadReg1),
+    .ReadReg2(ReadReg2),
+    .WriteReg(WriteReg),
+    .WriteData3(WriteData3),
+    .WriteEnable3(WriteEnable3),
+    .clock(clock),
+    .ReadData1(ReadData1),
+    .ReadData2(ReadData2)
+  );
+
+  initial begin
+    clock = 0;
+    forever #5 clock = ~clock;
+  end
+
+  initial begin
+    // Teste para escrita
+    WriteEnable3 = 1;
+    WriteReg = 5'd1;
+    WriteData3 = 32'd50;
+    #10;
+    WriteEnable3 = 0;
+    #10;
+    $display("Write: WriteReg = %d, WriteData3 = %d", WriteReg, WriteData3);
+
+    // Teste para leitura
+    ReadReg1 = 5'd1;
+    ReadReg2 = 5'd0;
+    #10;
+    $display("Read: ReadReg1 = %d, ReadData1 = %d", ReadReg1, ReadData1);
+    $display("Read: ReadReg2 = %d, ReadData2 = %d", ReadReg2, ReadData2);
+
+    $finish;
+  end
+endmodule
