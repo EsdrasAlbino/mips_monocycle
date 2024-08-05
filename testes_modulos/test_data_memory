@@ -1,0 +1,38 @@
+module test_dataMemory;
+  reg clock;
+  reg signed [31:0] address, WriteData;
+  reg WriteEnable;
+  wire signed [31:0] ReadData;
+
+  dataMemory uut (
+    .clock(clock),
+    .address(address),
+    .WriteData(WriteData),
+    .WriteEnable(WriteEnable),
+    .ReadData(ReadData)
+  );
+
+  initial begin
+    clock = 0;
+    forever #5 clock = ~clock;
+  end
+
+  initial begin
+    // Teste para escrita
+    WriteEnable = 1;
+    address = 0;
+    WriteData = 32'd100;
+    #10;
+    WriteEnable = 0;
+    #10;
+    $display("Write: Address = %d, WriteData = %d", address, WriteData);
+
+    // Teste para leitura
+    WriteEnable = 0;
+    address = 0;
+    #10;
+    $display("Read: Address = %d, ReadData = %d", address, ReadData);
+
+    $finish;
+  end
+endmodule
