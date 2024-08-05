@@ -1,0 +1,34 @@
+module tb_MuxRegDst;
+    reg RegDst;
+    reg [4:0] inst20_16;
+    reg [4:0] inst15_11;
+    wire [4:0] WriteReg;
+
+    // Instanciação do módulo MuxRegDst
+    MuxRegDst uut (
+        .RegDst(RegDst),
+        .inst20_16(inst20_16),
+        .inst15_11(inst15_11),
+        .WriteReg(WriteReg)
+    );
+
+    // Testando diferentes valores de RegDst
+    initial begin
+        // Inicializando os sinais
+        RegDst = 0;
+        inst20_16 = 5'b10101;
+        inst15_11 = 5'b01010;
+
+        // Testando com RegDst = 0
+        #10;
+        $display("RegDst = 0: WriteReg = %b (Esperado: 10101)", WriteReg);
+
+        // Testando com RegDst = 1
+        RegDst = 1;
+        #10;
+        $display("RegDst = 1: WriteReg = %b (Esperado: 01010)", WriteReg);
+
+        // Finalizar o teste
+        $finish;
+    end
+endmodule
