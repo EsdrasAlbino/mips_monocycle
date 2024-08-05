@@ -85,7 +85,7 @@ module ControlUnit(
     `J: begin 
     MemtoReg  = 1'b0;    
     MemWrite  = 1'b0;    
-    Branch    = 1'b0;    
+    Branch    = 1'b1;    
     ALUSrc    = 1'b0;    
     RegDst    = 1'b0;    
     RegWrite  = 1'b0;    
