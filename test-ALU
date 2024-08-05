@@ -1,0 +1,66 @@
+module tb_ALU;
+    reg [2:0] aluControl;
+    reg signed [31:0] SrcA;
+    reg signed [31:32] SrcB;
+    wire zero;
+    wire signed [31:0] aluOut;
+
+    // Instanciação do módulo ALU
+    ALU uut (
+        .aluControl(aluControl),
+        .SrcA(SrcA),
+        .SrcB(SrcB),
+        .zero(zero),
+        .aluOut(aluOut)
+    );
+
+    // Testando operações da ALU
+    initial begin
+        // Inicializando os sinais
+        SrcA = 32'd10;
+        SrcB = 32'd5;
+
+        // Testando operação ADD
+        aluControl = 3'b010;
+        #10;
+        $display("ADD: %d + %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Testando operação SUBTRACT
+        aluControl = 3'b110;
+        #10;
+        $display("SUBTRACT: %d - %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Testando operação AND
+        aluControl = 3'b000;
+        #10;
+        $display("AND: %d & %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Testando operação OR
+        aluControl = 3'b001;
+        #10;
+        $display("OR: %d | %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Testando operação SET LESS THAN
+        aluControl = 3'b111;
+        SrcA = 32'd5;
+        SrcB = 32'd10;
+        #10;
+        $display("SLT: %d < %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Testando operação SET LESS THAN com valores invertidos
+        SrcA = 32'd10;
+        SrcB = 32'd5;
+        #10;
+        $display("SLT: %d < %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Testando operação SUBTRACT com resultado zero
+        SrcA = 32'd10;
+        SrcB = 32'd10;
+        aluControl = 3'b110;
+        #10;
+        $display("SUBTRACT (Zero): %d - %d = %d, Zero = %b", SrcA, SrcB, aluOut, zero);
+
+        // Finalizar o teste
+        $finish;
+    end
+endmodule
