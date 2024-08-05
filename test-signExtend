@@ -1,0 +1,22 @@
+module tb_signExtend;
+    reg [15:0] inst15_0;
+    wire [31:0] extend32;
+
+    signExtend uut (
+        .inst15_0(inst15_0), 
+        .extend32(extend32)
+    );
+
+    initial begin
+        // Test Case: Sign extend 16-bit to 32-bit
+        inst15_0 = 16'h0001;
+        #10;
+        $display("extend32 = %h (Expected: 00000001)", extend32);
+
+        inst15_0 = 16'hFFFF;
+        #10;
+        $display("extend32 = %h (Expected: FFFFFFFF)", extend32);
+
+        $finish;
+    end
+endmodule
