@@ -1,0 +1,29 @@
+module tb_Mux5_PC;
+    reg [31:0] pcPlus4;
+    reg [31:0] branch;
+    reg PCSrc;
+    wire [31:0] PCoutMux;
+
+    Mux5_PC uut (
+        .pcPlus4(pcPlus4), 
+        .branch(branch), 
+        .PCSrc(PCSrc), 
+        .PCoutMux(PCoutMux)
+    );
+
+    initial begin
+        // Test Case 1: PCSrc = 0, should select pcPlus4
+        pcPlus4 = 32'h00000004;
+        branch = 32'h00000010;
+        PCSrc = 0;
+        #10;
+        $display("Test Case 1: PCoutMux = %h (Expected: 00000004)", PCoutMux);
+
+        // Test Case 2: PCSrc = 1, should select branch
+        PCSrc = 1;
+        #10;
+        $display("Test Case 2: PCoutMux = %h (Expected: 00000010)", PCoutMux);
+
+        $finish;
+    end
+endmodule
