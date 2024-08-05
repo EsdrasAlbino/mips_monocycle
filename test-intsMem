@@ -1,0 +1,22 @@
+module tb_instMem;
+    reg [31:0] address;
+    wire [31:0] ReadData;
+
+    instMem uut (
+        .address(address), 
+        .ReadData(ReadData)
+    );
+
+    initial begin
+        // Test Case: Read instruction from memory
+        address = 32'h00000000;
+        #10;
+        $display("ReadData = %h (Expected: value at address 0)", ReadData);
+
+        address = 32'h00000004;
+        #10;
+        $display("ReadData = %h (Expected: value at address 4)", ReadData);
+
+        $finish;
+    end
+endmodule
