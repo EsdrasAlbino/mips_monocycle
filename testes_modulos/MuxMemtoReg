@@ -1,0 +1,30 @@
+module test_MuxMemToReg;
+  reg MemtoReg;
+  reg [31:0] ALUOut, ReadData;
+  wire [31:0] out;
+
+  MuxMemToReg uut (
+    .MemtoReg(MemtoReg),
+    .ALUOut(ALUOut),
+    .ReadData(ReadData),
+    .out(out)
+  );
+
+  initial begin
+    // Teste para MemtoReg = 0
+    MemtoReg = 0;
+    ALUOut = 32'd100;
+    ReadData = 32'd200;
+    #10;
+    $display("MemtoReg = %b, ALUOut = %d, ReadData = %d, out = %d", MemtoReg, ALUOut, ReadData, out);
+
+    // Teste para MemtoReg = 1
+    MemtoReg = 1;
+    ALUOut = 32'd100;
+    ReadData = 32'd200;
+    #10;
+    $display("MemtoReg = %b, ALUOut = %d, ReadData = %d, out = %d", MemtoReg, ALUOut, ReadData, out);
+
+    $finish;
+  end
+endmodule
