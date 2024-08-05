@@ -1,0 +1,64 @@
+module tb_regFile;
+    reg [4:0] readReg1, readReg2, writeReg;
+    reg [31:0] writeData;
+    reg writeEnable;
+    reg clock;
+    wire [31:0] readData1, readData2;
+
+    // Instanciação do módulo regFile
+    regFile uut (
+        .ReadReg1(readReg1),
+        .ReadReg2(readReg2),
+        .WriteReg(writeReg),
+        .WriteData3(writeData),
+        .WriteEnable3(writeEnable),
+        .clock(clock),
+        .ReadData1(readData1),
+        .ReadData2(readData2)
+    );
+
+    // Geração do clock
+    initial begin
+        clock = 0;
+        forever #5 clock = ~clock;
+    end
+
+    // Testando operações de leitura e escrita no arquivo de registradores
+    initial begin
+        // Inicializando os sinais
+        readReg1 = 5'b0;
+        readReg2 = 5'b0;
+        writeReg = 5'b0;
+        writeData = 32'b0;
+        writeEnable = 0;
+
+        // Aguardar alguns ciclos de clock
+        #10;
+
+        // Escrever valores nos registradores
+        writeReg = 5'd1;
+        writeData = 32'hA5A5A5A5;
+        writeEnable = 1;
+        #10;
+        writeEnable = 0; // Desabilitar escrita
+
+        #10;
+
+        writeReg = 5'd2;
+        writeData = 32'h5A5A5A5A;
+        writeEnable = 1;
+        #10;
+        writeEnable = 0; // Desabilitar escrita
+
+        // Ler valores dos registradores
+        #10;
+        readReg1 = 5'd1;
+        readReg2 = 5'd2;
+        #10;
+        $display("ReadData1 = %h (Esperado: A5A5A5A5)", readData1);
+        $display("ReadData2 = %h (Esperado: 5A5A5A5A)", readData2);
+
+        // Finalizar o teste
+        $finish;
+    end
+endmodule
