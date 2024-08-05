@@ -1,0 +1,29 @@
+module tb_Mux6_Jump;
+    reg [31:0] PCJumpIn;
+    reg jump;
+    reg [25:0] destination;
+    wire [31:0] PC_jump_output;
+
+    Mux6_Jump uut (
+        .PCJumpIn(PCJumpIn), 
+        .jump(jump), 
+        .destination(destination), 
+        .PC_jump_output(PC_jump_output)
+    );
+
+    initial begin
+        // Test Case: Jump
+        PCJumpIn = 32'h00000004;
+        jump = 1;
+        destination = 26'h000010;
+        #10;
+        $display("PC_jump_output = %h (Expected: 00000040)", PC_jump_output);
+
+        // Test Case: No Jump
+        jump = 0;
+        #10;
+        $display("PC_jump_output = %h (Expected: 00000004)", PC_jump_output);
+
+        $finish;
+    end
+endmodule
