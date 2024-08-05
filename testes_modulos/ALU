@@ -1,0 +1,60 @@
+module test_ALU;
+  reg [2:0] aluControl;
+  reg signed [31:0] SrcA, SrcB;
+  wire zero;
+  wire signed [31:0] aluOut;
+
+  ALU uut (
+    .aluControl(aluControl),
+    .SrcA(SrcA),
+    .SrcB(SrcB),
+    .zero(zero),
+    .aluOut(aluOut)
+  );
+
+  initial begin
+    // Teste para ADD
+    aluControl = 3'b010;
+    SrcA = 32'd10;
+    SrcB = 32'd15;
+    #10;
+    $display("ADD: SrcA = %d, SrcB = %d, aluOut = %d, zero = %b", SrcA, SrcB, aluOut, zero);
+
+    // Teste para SUBTRACT
+    aluControl = 3'b110;
+    SrcA = 32'd20;
+    SrcB = 32'd10;
+    #10;
+    $display("SUB: SrcA = %d, SrcB = %d, aluOut = %d, zero = %b", SrcA, SrcB, aluOut, zero);
+
+    // Teste para AND
+    aluControl = 3'b000;
+    SrcA = 32'b1010;
+    SrcB = 32'b0110;
+    #10;
+    $display("AND: SrcA = %b, SrcB = %b, aluOut = %b, zero = %b", SrcA, SrcB, aluOut, zero);
+
+    // Teste para OR
+    aluControl = 3'b001;
+    SrcA = 32'b1010;
+    SrcB = 32'b0110;
+    #10;
+    $display("OR: SrcA = %b, SrcB = %b, aluOut = %b, zero = %b", SrcA, SrcB, aluOut, zero);
+
+    // Teste para SET LESS THAN
+    aluControl = 3'b111;
+    SrcA = 32'd5;
+    SrcB = 32'd10;
+    #10;
+    $display("SLT: SrcA = %d, SrcB = %d, aluOut = %d, zero = %b", SrcA, SrcB, aluOut, zero);
+
+    // Teste para zero flag
+    aluControl = 3'b010;
+    SrcA = 32'd5;
+    SrcB = -32'd5;
+    #10;
+    $display("Zero: SrcA = %d, SrcB = %d, aluOut = %d, zero = %b", SrcA, SrcB, aluOut, zero);
+
+    $finish;
+  end
+endmodule
