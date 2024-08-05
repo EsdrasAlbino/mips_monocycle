@@ -1,0 +1,33 @@
+module test_PC;
+  reg [31:0] PCIn;
+  reg clock;
+  wire [31:0] PCOut;
+
+  PC uut (
+    .PCIn(PCIn),
+    .clock(clock),
+    .PCOut(PCOut)
+  );
+
+  initial begin
+    clock = 0;
+    forever #5 clock = ~clock;
+  end
+
+  initial begin
+    // Teste para mudança de PC
+    PCIn = 32'd100;
+    #10;
+    $display("PCIn = %d, PCOut = %d", PCIn, PCOut);
+
+    PCIn = 32'd200;
+    #10;
+    $display("PCIn = %d, PCOut = %d", PCIn, PCOut);
+
+    PCIn = 32'd300;
+    #10;
+    $display("PCIn = %d, PCOut = %d", PCIn, PCOut);
+
+    $finish;
+  end
+endmodule
