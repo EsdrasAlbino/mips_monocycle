@@ -1,0 +1,25 @@
+module test_PCBranch;
+  reg [31:0] extend32, PCplus4;
+  wire [31:0] out;
+
+  PCBranch uut (
+    .extend32(extend32),
+    .PCplus4(PCplus4),
+    .out(out)
+  );
+
+  initial begin
+    // Teste para cálculo de endereço de branch
+    extend32 = 32'd4;
+    PCplus4 = 32'd100;
+    #10;
+    $display("extend32 = %d, PCplus4 = %d, out = %d", extend32, PCplus4, out);
+
+    extend32 = -32'd4;
+    PCplus4 = 32'd100;
+    #10;
+    $display("extend32 = %d, PCplus4 = %d, out = %d", extend32, PCplus4, out);
+
+    $finish;
+  end
+endmodule
