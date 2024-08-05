@@ -179,6 +179,7 @@ Nesta sessão, trabalharemos cada um dos módulos que constituem a microarquitet
 ## Resultados
 O processador monociclo MIPS foi implementado e testado com sucesso. Ele foi capaz de executar uma variedade de instruções MIPS e produziu os resultados esperados. O projeto atendeu aos requisitos de desempenho e demonstrou o comportamento correto.
 
+![Resultados](https://github.com/user-attachments/assets/e50a88cc-a28d-4b50-905c-e1be8d02b64a)
 ## Conclusão
 Em conclusão, este projeto proporcionou uma valiosa experiência prática no projeto e implementação de um processador monociclo MIPS utilizando Verilog HDL. O projeto ajudou a aprofundar o entendimento da arquitetura de computadores e do projeto lógico digital. Trabalhos futuros podem envolver a expansão do conjunto de instruções ou a otimização do projeto para melhor desempenho.
 
