@@ -1,0 +1,55 @@
+module tb_controlUnit;
+    reg [5:0] op;
+    reg [5:0] funct;
+    wire memToReg, memWrite, branch, aluSrc, regDst, regWrite, jump;
+    wire [2:0] aluControl;
+
+    // Instanciação do módulo controlUnit
+    controlUnit uut (
+        .op(op),
+        .funct(funct),
+        .menToReg(memToReg),
+        .menWrite(memWrite),
+        .branch(branch),
+        .aluSrc(aluSrc),
+        .regDst(regDst),
+        .regWrite(regWrite),
+        .jump(jump),
+        .aluControl(aluControl)
+    );
+
+    // Testando diferentes operações
+    initial begin
+        // Inicializando sinais
+        op = 6'b0;
+        funct = 6'b0;
+
+        // Testando instrução LW (Load Word)
+        #10;
+        op = 6'b100011;
+        #10;
+        $display("LW: memToReg = %b, memWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", memToReg, memWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+        // Testando instrução SW (Store Word)
+        #10;
+        op = 6'b101011;
+        #10;
+        $display("SW: memToReg = %b, memWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", memToReg, memWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+        // Testando instrução BEQ (Branch on Equal)
+        #10;
+        op = 6'b000100;
+        #10;
+        $display("BEQ: memToReg = %b, memWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", memToReg, memWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+        // Testando instrução R-TYPE (ADD, SUB, etc.)
+        #10;
+        op = 6'b000000;
+        funct = 6'b100000; // ADD
+        #10;
+        $display("R-TYPE (ADD): memToReg = %b, memWrite = %b, branch = %b, aluSrc = %b, regDst = %b, regWrite = %b, jump = %b, aluControl = %b", memToReg, memWrite, branch, aluSrc, regDst, regWrite, jump, aluControl);
+
+        // Finalizar o teste
+        $finish;
+    end
+endmodule
