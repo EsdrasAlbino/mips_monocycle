@@ -1,0 +1,33 @@
+module tb_PC;
+    reg [31:0] PCIn;
+    reg clock;
+    wire [31:0] PCOut;
+
+    PC uut (
+        .PCIn(PCIn), 
+        .clock(clock), 
+        .PCOut(PCOut)
+    );
+
+    initial begin
+        clock = 0;
+        PCIn = 32'h00000000;
+
+        // Generate clock
+        forever #5 clock = ~clock;
+    end
+
+    initial begin
+        // Test Case: PC should update on rising edge of clock
+        #10;
+        PCIn = 32'h00000004;
+        #10;
+        $display("PCOut = %h (Expected: 00000004)", PCOut);
+
+        PCIn = 32'h00000008;
+        #10;
+        $display("PCOut = %h (Expected: 00000008)", PCOut);
+
+        $finish;
+    end
+endmodule
