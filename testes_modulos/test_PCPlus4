@@ -1,0 +1,22 @@
+module test_PCplus_4;
+  reg [31:0] PCplusIn;
+  wire [31:0] PCplusOut;
+
+  PCplus_4 uut (
+    .PCplusIn(PCplusIn),
+    .PCplusOut(PCplusOut)
+  );
+
+  initial begin
+    // Teste para incremento de PC
+    PCplusIn = 32'd100;
+    #10;
+    $display("PCplusIn = %d, PCplusOut = %d", PCplusIn, PCplusOut);
+
+    PCplusIn = 32'd200;
+    #10;
+    $display("PCplusIn = %d, PCplusOut = %d", PCplusIn, PCplusOut);
+
+    $finish;
+  end
+endmodule
