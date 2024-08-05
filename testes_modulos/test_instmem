@@ -1,0 +1,28 @@
+module test_instMem;
+  reg [31:0] address;
+  wire [31:0] ReadData;
+
+  instMem uut (
+    .address(address),
+    .ReadData(ReadData)
+  );
+
+  initial begin
+    // Teste para instrução ADDI
+    address = 0;
+    #10;
+    $display("ADDI: Address = %d, ReadData = %b", address, ReadData);
+
+    // Teste para instrução SW
+    address = 4;
+    #10;
+    $display("SW: Address = %d, ReadData = %b", address, ReadData);
+
+    // Teste para instrução SUB
+    address = 16;
+    #10;
+    $display("SUB: Address = %d, ReadData = %b", address, ReadData);
+
+    $finish;
+  end
+endmodule
