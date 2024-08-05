@@ -1,0 +1,23 @@
+module test_signExtend;
+  reg signed [15:0] inst15_0;
+  wire signed [31:0] extend32;
+
+  signExtend uut (
+    .inst15_0(inst15_0),
+    .extend32(extend32)
+  );
+
+  initial begin
+    // Teste para extensão de sinal positivo
+    inst15_0 = 16'd1000;
+    #10;
+    $display("inst15_0 = %d, extend32 = %d", inst15_0, extend32);
+
+    // Teste para extensão de sinal negativo
+    inst15_0 = -16'd1000;
+    #10;
+    $display("inst15_0 = %d, extend32 = %d", inst15_0, extend32);
+
+    $finish;
+  end
+endmodule
