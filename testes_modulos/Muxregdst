@@ -1,0 +1,30 @@
+module test_MuxRegDst;
+  reg RegDst;
+  reg [4:0] inst20_16, inst15_11;
+  wire [4:0] WriteReg;
+
+  MuxRegDst uut (
+    .RegDst(RegDst),
+    .inst20_16(inst20_16),
+    .inst15_11(inst15_11),
+    .WriteReg(WriteReg)
+  );
+
+  initial begin
+    // Teste para RegDst = 0
+    RegDst = 0;
+    inst20_16 = 5'd10;
+    inst15_11 = 5'd20;
+    #10;
+    $display("RegDst = %b, inst20_16 = %d, inst15_11 = %d, WriteReg = %d", RegDst, inst20_16, inst15_11, WriteReg);
+
+    // Teste para RegDst = 1
+    RegDst = 1;
+    inst20_16 = 5'd10;
+    inst15_11 = 5'd20;
+    #10;
+    $display("RegDst = %b, inst20_16 = %d, inst15_11 = %d, WriteReg = %d", RegDst, inst20_16, inst15_11, WriteReg);
+
+    $finish;
+  end
+endmodule
