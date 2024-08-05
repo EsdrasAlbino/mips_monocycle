@@ -1,0 +1,22 @@
+module tb_PCplus_4;
+    reg [31:0] PCplusIn;
+    wire [31:0] PCplusOut;
+
+    PCplus_4 uut (
+        .PCplusIn(PCplusIn), 
+        .PCplusOut(PCplusOut)
+    );
+
+    initial begin
+        // Test Case: PCplusIn + 4
+        PCplusIn = 32'h00000000;
+        #10;
+        $display("PCplusOut = %h (Expected: 00000004)", PCplusOut);
+
+        PCplusIn = 32'h00000010;
+        #10;
+        $display("PCplusOut = %h (Expected: 00000014)", PCplusOut);
+
+        $finish;
+    end
+endmodule
