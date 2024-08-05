@@ -5,7 +5,7 @@ int main(){
     int v1 = 10;
 
     if(v1 == v0){
-        v0 =1;
-        return;
+        v0 = 1;
     }   
+    return 0;
 }
