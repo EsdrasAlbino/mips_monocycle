@@ -379,7 +379,7 @@ module PCplus_4(
   output [31:0] PCplusOut
 );
 
-  module ttB;
+  module MIPS;
     reg clock = 0;
  
     wire W_PCSrc;
